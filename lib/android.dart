@@ -67,8 +67,22 @@ void createAdaptiveIcons(Map<String, dynamic> flutterLauncherIconsConfig) {
   flutterLauncherIconsConfig['adaptive_icon_background'];
   final String foregroundImagePath =
   flutterLauncherIconsConfig['adaptive_icon_foreground'];
+  final boolean isPaddingRequired =
+  flutterLauncherIconsConfig['adaptive_icon_padding'] ?? false;
   final Image foregroundImage =
   decodeImage(File(foregroundImagePath).readAsBytesSync());
+
+  // If required, pad image by fitting it into a transparent image with
+  // 1.5x its width and height
+  if (isPaddingRequired) {
+    int width = int(foregroundImage.width * 1.5)
+    int height = int(foregroundImage.height * 1.5)
+    int dstX = int(foregroundImage.width * 0.25)
+    int dstY = int(foregroundimage.height * 0.25)
+    Image transparentImage = Image(width, height)..fill(getColor(0, 0, 0, 0));
+    foregroundImage =
+    copyInto(transparentImage, foregroundImage, dstX: dstX, dstY: dstY, blend: false)
+  }
 
   // Create adaptive icon foreground images
   for (AndroidIconTemplate androidIcon in adaptiveForegroundIcons) {
